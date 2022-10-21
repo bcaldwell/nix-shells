@@ -4,34 +4,31 @@
   inputs.flake-utils.url = "github:numtide/flake-utils";
 
   outputs = { self, nixpkgs, flake-utils }:
-    let
-      rest = a: builtins.removeAttrs a [
-        "buildInputs"
-        "nativeBuildInputs"
-        "propagatedBuildInputs"
-        "propagatedNativeBuildInputs"
-        "shellHook"
-      ];
-      lib = nixpkgs.lib;
-      mergeAttr = a: b: attr: (lib.attrByPath [ attr ] [ ] a) ++ (lib.attrByPath [ attr ] [ ] b);
-    in
-    {
-      lib.mergeShells = envs: pkgs.mkShell (builtins.foldl'
-        (a: v: ({
-          buildInputs = mergeAttr a v "buildInputs";
-          nativeBuildInputs = mergeAttr a v "nativeBuildInputs";
-          propagatedBuildInputs = mergeAttr a v "propagatedBuildInputs";
-          propagatedNativeBuildInputs = mergeAttr a v "propagatedNativeBuildInputs";
-          shellHook = (lib.attrByPath [ "shellHook" ] "" a) + "\n" + (lib.attrByPath [ "shellHook" ] "" v);
-        } // rest a // rest v))
-        { buildInputs = [ ]; }
-        envs);
-    } //
     flake-utils.lib.eachDefaultSystem (system:
       let
         defaultpkgs = nixpkgs.legacyPackages.${system};
+        rest = a: builtins.removeAttrs a [
+          "buildInputs"
+          "nativeBuildInputs"
+          "propagatedBuildInputs"
+          "propagatedNativeBuildInputs"
+          "shellHook"
+        ];
+        lib = pkgs.lib;
+        mergeAttr = a: b: attr: (lib.attrByPath [ attr ] [ ] a) ++ (lib.attrByPath [ attr ] [ ] b);
       in
       rec {
+        mergeShells = envs: pkgs.mkShell (builtins.foldl'
+          (a: v: ({
+            buildInputs = mergeAttr a v "buildInputs";
+            nativeBuildInputs = mergeAttr a v "nativeBuildInputs";
+            propagatedBuildInputs = mergeAttr a v "propagatedBuildInputs";
+            propagatedNativeBuildInputs = mergeAttr a v "propagatedNativeBuildInputs";
+            shellHook = (lib.attrByPath [ "shellHook" ] "" a) + "\n" + (lib.attrByPath [ "shellHook" ] "" v);
+          } // rest a // rest v))
+          { buildInputs = [ ]; }
+          envs);
+
         shells = { pkgs ? defaultpkgs }: builtins.mapAttrs
           (name: value: {
             buildInputs = value;
