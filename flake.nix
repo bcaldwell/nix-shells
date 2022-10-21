@@ -31,12 +31,12 @@
 
         shells = { pkgs ? defaultpkgs }: 
         let 
-          env = (env { inherit pkgs; });
+          evaluatedEnv = (env { inherit pkgs; });
         in
         builtins.mapAttrs
           (name: value: {
             buildInputs = value;
-          } // (lib.attrByPath [ name ] { } env))
+          } // (lib.attrByPath [ name ] { } evaluatedEnv))
           (buildInputs { inherit pkgs; });
 
         buildInputs = { pkgs ? defaultpkgs }: with pkgs; {
