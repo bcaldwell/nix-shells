@@ -16,7 +16,7 @@
       mergeAttr = a: b: attr: (lib.attrByPath [ attr ] [ ] a) ++ (lib.attrByPath [ attr ] [ ] b);
     in
     {
-      lib.mergeShells = = envs: pkgs.mkShell (builtins.foldl'
+      lib.mergeShells = envs: pkgs.mkShell (builtins.foldl'
         (a: v: ({
           buildInputs = mergeAttr a v "buildInputs";
           nativeBuildInputs = mergeAttr a v "nativeBuildInputs";
