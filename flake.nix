@@ -32,7 +32,7 @@
         shells = { pkgs ? defaultpkgs }: builtins.mapAttrs
           (name: value: {
             buildInputs = value;
-          } // (lib.attrByPath [ name ] { } env) { inherit pkgs; })
+          } // (lib.attrByPath [ name ] { ... }:{} env) { inherit pkgs; })
           (buildInputs { inherit pkgs; });
 
         buildInputs = { pkgs ? defaultpkgs }: with pkgs; {
