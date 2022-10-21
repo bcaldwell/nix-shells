@@ -32,13 +32,12 @@
         shells = { pkgs ? defaultpkgs }:
         let 
           env = env { inherit pkgs; };
-          buildInputs = buildInputs { inherit pkgs; };
         in
            builtins.mapAttrs
             (name: value: {
               buildInputs = value;
             } // (lib.attrByPath [ name ] {} env)
-            buildInputs);
+            (buildInputs { inherit pkgs; }));
 
         buildInputs = { pkgs ? defaultpkgs }: with pkgs; {
           base = [ gnumake ];
