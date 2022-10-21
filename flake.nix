@@ -4,9 +4,32 @@
   inputs.flake-utils.url = "github:numtide/flake-utils";
 
   outputs = { self, nixpkgs, flake-utils }:
+    let
+      rest = a: builtins.removeAttrs a [
+        "buildInputs"
+        "nativeBuildInputs"
+        "propagatedBuildInputs"
+        "propagatedNativeBuildInputs"
+        "shellHook"
+      ];
+      lib = pkgs.lib;
+      mergeAttr = a: b: attr: (lib.attrByPath [ attr ] [ ] a) ++ (lib.attrByPath [ attr ] [ ] b);
+    in
+    {
+      lib.mergeShells = = envs: pkgs.mkShell (builtins.foldl'
+        (a: v: ({
+          buildInputs = mergeAttr a v "buildInputs";
+          nativeBuildInputs = mergeAttr a v "nativeBuildInputs";
+          propagatedBuildInputs = mergeAttr a v "propagatedBuildInputs";
+          propagatedNativeBuildInputs = mergeAttr a v "propagatedNativeBuildInputs";
+          shellHook = (lib.attrByPath [ "shellHook" ] "" a) + "\n" + (lib.attrByPath [ "shellHook" ] "" v);
+        } // rest a // rest v))
+        { buildInputs = [ ]; }
+        envs);
+    } //
     flake-utils.lib.eachDefaultSystem (system:
       let
-        pkgs = nixpkgs.legacyPackages.${system};
+        defaultpkgs = nixpkgs.legacyPackages.${system};
         rest = a: builtins.removeAttrs a [
           "buildInputs"
           "nativeBuildInputs"
@@ -18,24 +41,13 @@
         mergeAttr = a: b: attr: (lib.attrByPath [ attr ] [ ] a) ++ (lib.attrByPath [ attr ] [ ] b);
       in
       rec {
-        mergeShells = envs: pkgs.mkShell (builtins.foldl'
-          (a: v: ({
-            buildInputs = mergeAttr a v "buildInputs";
-            nativeBuildInputs = mergeAttr a v "nativeBuildInputs";
-            propagatedBuildInputs = mergeAttr a v "propagatedBuildInputs";
-            propagatedNativeBuildInputs = mergeAttr a v "propagatedNativeBuildInputs";
-            shellHook = (lib.attrByPath [ "shellHook" ] "" a) + "\n" + (lib.attrByPath [ "shellHook" ] "" v);
-          } // rest a // rest v))
-          { buildInputs = [ ]; }
-          envs);
-
-        shells = { p ? pkgs }: builtins.mapAttrs
+        shells = { pkgs ? defaultpkgs }: builtins.mapAttrs
           (name: value: {
             buildInputs = value;
           } // (lib.attrByPath [ name ] { } env))
-          (buildInputs { inherit p; });
+          (buildInputs { inherit pkgs; });
 
-        buildInputs = { p ? pkgs }: with p; {
+        buildInputs = { pkgs ? defaultpkgs }: with pkgs; {
           base = [ gnumake ];
           golang = [
             go_1_19
