@@ -14,7 +14,7 @@
           "propagatedNativeBuildInputs"
           "shellHook"
         ];
-        lib = pkgs.lib;
+        lib = nixpkgs.lib;
         mergeAttr = a: b: attr: (lib.attrByPath [ attr ] [ ] a) ++ (lib.attrByPath [ attr ] [ ] b);
       in
       rec {
