@@ -29,11 +29,12 @@
           { buildInputs = [ ]; }
           envs);
 
-        shells = let 
+        shells = { pkgs ? defaultpkgs }:
+        let 
           env = env { inherit pkgs; };
           buildInputs = buildInputs { inherit pkgs; };
         in
-          { pkgs ? defaultpkgs }: builtins.mapAttrs
+           builtins.mapAttrs
             (name: value: {
               buildInputs = value;
             } // (lib.attrByPath [ name ] {} env)
