@@ -56,7 +56,6 @@
 
           python310 = [
             python310
-            python310Packages.ruamel-yaml
             nodePackages.pyright
             python310Packages.mypy
             python310Packages.pytest
