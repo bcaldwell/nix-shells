@@ -32,7 +32,7 @@
         shells = { pkgs ? defaultpkgs }: builtins.mapAttrs
             (name: value: {
               buildInputs = value;
-            } // (lib.attrByPath [ name ] {} (env {}))
+            } // (lib.attrByPath [ name ] {} env)
             (buildInputs { inherit pkgs; }));
 
         buildInputs = { pkgs ? defaultpkgs }: with pkgs; {
@@ -69,7 +69,7 @@
           ];
         };
 
-        env = { pkgs ? defaultpkgs }:{
+        env = {
           rust = {
             # Certain Rust tools won't work without this
             # This can also be fixed by using oxalica/rust-overlay and specifying the rust-src extension
