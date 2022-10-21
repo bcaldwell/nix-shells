@@ -29,15 +29,15 @@
           { buildInputs = [ ]; }
           envs);
 
-        shells = { pkgs ? defaultpkgs }: 
-        let 
-          evaluatedEnv = (env { inherit pkgs; });
-        in
-        builtins.mapAttrs
-          (name: value: {
-            buildInputs = value;
-          } // (lib.attrByPath [ name ] { } evaluatedEnv))
-          (buildInputs { inherit pkgs; });
+        shells = { pkgs ? defaultpkgs }:
+          let
+            evaluatedEnv = (env { inherit pkgs; });
+          in
+          builtins.mapAttrs
+            (name: value: {
+              buildInputs = value;
+            } // (lib.attrByPath [ name ] { } evaluatedEnv))
+            (buildInputs { inherit pkgs; });
 
         buildInputs = { pkgs ? defaultpkgs }: with pkgs; {
           base = [ gnumake ];
@@ -73,7 +73,7 @@
           ];
         };
 
-        env = { pkgs ? defaultpkgs }:{
+        env = { pkgs ? defaultpkgs }: {
           rust = {
             # Certain Rust tools won't work without this
             # This can also be fixed by using oxalica/rust-overlay and specifying the rust-src extension
