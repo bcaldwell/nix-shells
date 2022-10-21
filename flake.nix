@@ -31,7 +31,7 @@
 
         shells = let 
           env = env { inherit pkgs; };
-          buildInputs = buildInputs { inherit pkgs; }
+          buildInputs = buildInputs { inherit pkgs; };
         in
           { pkgs ? defaultpkgs }: builtins.mapAttrs
             (name: value: {
