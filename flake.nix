@@ -29,11 +29,14 @@
           { buildInputs = [ ]; }
           envs);
 
-        shells = { pkgs ? defaultpkgs }: builtins.mapAttrs
-          (name: value: {
-            buildInputs = value;
-          } // (lib.attrByPath [ name ] { ... }:{} env) { inherit pkgs; })
-          (buildInputs { inherit pkgs; });
+        shells = let 
+          env = env { inherit pkgs; };
+        in
+          { pkgs ? defaultpkgs }: builtins.mapAttrs
+            (name: value: {
+              buildInputs = value;
+            } // (lib.attrByPath [ name ] {} env)
+            (buildInputs { inherit pkgs; });
 
         buildInputs = { pkgs ? defaultpkgs }: with pkgs; {
           base = [ gnumake ];
