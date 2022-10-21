@@ -12,7 +12,7 @@
         "propagatedNativeBuildInputs"
         "shellHook"
       ];
-      lib = pkgs.lib;
+      lib = nixpkgs.legacyPackages.${system}.lib;
       mergeAttr = a: b: attr: (lib.attrByPath [ attr ] [ ] a) ++ (lib.attrByPath [ attr ] [ ] b);
     in
     {
@@ -30,15 +30,6 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
         defaultpkgs = nixpkgs.legacyPackages.${system};
-        rest = a: builtins.removeAttrs a [
-          "buildInputs"
-          "nativeBuildInputs"
-          "propagatedBuildInputs"
-          "propagatedNativeBuildInputs"
-          "shellHook"
-        ];
-        lib = pkgs.lib;
-        mergeAttr = a: b: attr: (lib.attrByPath [ attr ] [ ] a) ++ (lib.attrByPath [ attr ] [ ] b);
       in
       rec {
         shells = { pkgs ? defaultpkgs }: builtins.mapAttrs
