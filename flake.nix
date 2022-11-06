@@ -46,7 +46,7 @@
             gopls
             delve
             golangci-lint
-            gotools
+            # gotools
           ];
 
           terraform = [
