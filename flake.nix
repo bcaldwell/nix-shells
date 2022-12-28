@@ -14,6 +14,11 @@
           "propagatedNativeBuildInputs"
           "shellHook"
         ];
+        go-tools-subset = pkgs.runCommand "go-tools-subset" { } ''
+          mkdir -p $out/bin
+          ln -s ${pkgs.gotools}/bin/goimports $out/bin/ls
+          ln -s ${pkgs.gotools}/bin/godoc $out/bin/ls
+        '';
         lib = defaultpkgs.lib;
         mergeAttr = a: b: attr: (lib.attrByPath [ attr ] [ ] a) ++ (lib.attrByPath [ attr ] [ ] b);
       in
@@ -46,7 +51,7 @@
             gopls
             delve
             golangci-lint
-            gotools
+            go-tools-subset
           ];
 
           terraform = [
@@ -61,6 +66,15 @@
             python310Packages.pytest
             python310Packages.pytest-cov
             python310Packages.black
+          ];
+
+          python39 = [
+            python39
+            nodePackages.pyright
+            python39Packages.mypy
+            python39Packages.pytest
+            python39Packages.pytest-cov
+            python39Packages.black
           ];
 
           rust = [
