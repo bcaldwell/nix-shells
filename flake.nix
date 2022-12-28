@@ -44,22 +44,22 @@
             } // (lib.attrByPath [ name ] { } evaluatedEnv))
             (buildInputs { inherit pkgs; });
 
-        buildInputs = { pkgs ? defaultpkgs }: with pkgs; {
-          base = [ gnumake ];
+        buildInputs = { pkgs ? defaultpkgs }: {
+          base = [ pkgs.gnumake ];
           golang = [
-            go_1_19
-            gopls
-            delve
-            golangci-lint
+            pkgs.go_1_19
+            pkgs.gopls
+            pkgs.delve
+            pkgs.golangci-lint
             go-tools-subset
           ];
 
-          terraform = [
+          terraform = with pkgs; [
             terraform
             terraform-ls
           ];
 
-          python310 = [
+          python310 = with pkgs; [
             python310
             nodePackages.pyright
             python310Packages.mypy
@@ -68,7 +68,7 @@
             python310Packages.black
           ];
 
-          python39 = [
+          python39 = with pkgs; [
             python39
             nodePackages.pyright
             python39Packages.mypy
@@ -77,7 +77,7 @@
             python39Packages.black
           ];
 
-          rust = [
+          rust = with pkgs; [
             cargo
             rustc
             rustfmt
