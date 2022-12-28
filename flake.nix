@@ -14,11 +14,6 @@
           "propagatedNativeBuildInputs"
           "shellHook"
         ];
-        go-tools-subset = pkgs.runCommand "go-tools-subset" { } ''
-          mkdir -p $out/bin
-          ln -s ${pkgs.gotools}/bin/goimports $out/bin/ls
-          ln -s ${pkgs.gotools}/bin/godoc $out/bin/ls
-        '';
         lib = defaultpkgs.lib;
         mergeAttr = a: b: attr: (lib.attrByPath [ attr ] [ ] a) ++ (lib.attrByPath [ attr ] [ ] b);
       in
@@ -37,6 +32,11 @@
         shells = { pkgs ? defaultpkgs }:
           let
             evaluatedEnv = (env { inherit pkgs; });
+            go-tools-subset = pkgs.runCommand "go-tools-subset" { } ''
+              mkdir -p $out/bin
+              ln -s ${pkgs.gotools}/bin/goimports $out/bin/ls
+              ln -s ${pkgs.gotools}/bin/godoc $out/bin/ls
+            '';
           in
           builtins.mapAttrs
             (name: value: {
