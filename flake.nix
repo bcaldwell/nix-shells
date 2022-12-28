@@ -48,8 +48,8 @@
             pkgs.golangci-lint
             (pkgs.runCommand "go-tools-subset" { } ''
               mkdir -p $out/bin
-              ln -s ${pkgs.gotools}/bin/goimports $out/bin/ls
-              ln -s ${pkgs.gotools}/bin/godoc $out/bin/ls
+              ln -s ${pkgs.gotools}/bin/goimports $out/bin/goimports
+              ln -s ${pkgs.gotools}/bin/godoc $out/bin/godoc
             '')
           ];
 
