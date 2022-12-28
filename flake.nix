@@ -32,11 +32,6 @@
         shells = { pkgs ? defaultpkgs }:
           let
             evaluatedEnv = (env { inherit pkgs; });
-            go-tools-subset = pkgs.runCommand "go-tools-subset" { } ''
-              mkdir -p $out/bin
-              ln -s ${pkgs.gotools}/bin/goimports $out/bin/ls
-              ln -s ${pkgs.gotools}/bin/godoc $out/bin/ls
-            '';
           in
           builtins.mapAttrs
             (name: value: {
@@ -45,13 +40,17 @@
             (buildInputs { inherit pkgs; });
 
         buildInputs = { pkgs ? defaultpkgs }: {
-          base = [ pkgs.gnumake ];
+          base = [ gnumake ];
           golang = [
             pkgs.go_1_19
             pkgs.gopls
             pkgs.delve
             pkgs.golangci-lint
-            go-tools-subset
+            (pkgs.runCommand "go-tools-subset" { } ''
+              mkdir -p $out/bin
+              ln -s ${pkgs.gotools}/bin/goimports $out/bin/ls
+              ln -s ${pkgs.gotools}/bin/godoc $out/bin/ls
+            '')
           ];
 
           terraform = with pkgs; [
