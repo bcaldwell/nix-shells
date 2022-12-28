@@ -40,7 +40,7 @@
             (buildInputs { inherit pkgs; });
 
         buildInputs = { pkgs ? defaultpkgs }: {
-          base = [ gnumake ];
+          base = with pkgs; [ gnumake ];
           golang = [
             pkgs.go_1_19
             pkgs.gopls
