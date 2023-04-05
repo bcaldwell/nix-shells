@@ -42,7 +42,7 @@
         buildInputs = { pkgs ? defaultpkgs }: {
           base = with pkgs; [ gnumake ];
           golang = [
-            pkgs.go_1_19
+            pkgs.go
             pkgs.gopls
             pkgs.delve
             pkgs.golangci-lint
