@@ -47,6 +47,7 @@
             pkgs.delve
             pkgs.golangci-lint
             pkgs.govulncheck
+            pkgs.gotests
             (pkgs.runCommand "go-tools-subset" { } ''
               mkdir -p $out/bin
               ln -s ${pkgs.gotools}/bin/goimports $out/bin/goimports
