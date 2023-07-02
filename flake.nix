@@ -58,6 +58,7 @@
           terraform = with pkgs; [
             terraform
             terraform-ls
+            tflint
           ];
 
           python310 = with pkgs; [
