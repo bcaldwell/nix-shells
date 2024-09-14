@@ -1,0 +1,4 @@
+use shared_flake "generic/golang"
+export GOBIN=$PWD/bin
+PATH_add $GOBIN
+

@@ -1,0 +1,39 @@
+version: '3'
+
+tasks:
+  default:
+    cmds:
+      - task: fmt
+
+  fmt:
+    cmds:
+      - nixpkgs-fmt .
+    silent: true
+
+  flake-operation:
+    silent: true
+    vars:
+      OPERATION: '{{default "missing" .OPERATION }}'
+    cmds:
+    - |
+      set -e
+      for file in $(find $(pwd) -type f -name flake.lock); do
+        echo $file
+        cd $(dirname $file) && nix flake {{ .OPERATION }}
+        echo ""
+      done
+
+  flake-update:
+    silent: false
+    cmds:
+      - task: flake-operation
+        vars:
+          OPERATION: update --override-input nixpkgs github:NixOS/nixpkgs/$(jq -r '.nodes["nixpkgs"].locked.rev' ~/.config/darwin/flake.lock)
+          
+  flake-check:
+    silent: true
+    cmds:
+      - task: flake-operation
+        vars:
+          OPERATION: check
+          
