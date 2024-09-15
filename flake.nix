@@ -18,6 +18,10 @@
         mergeAttr = a: b: attr: (lib.attrByPath [ attr ] [ ] a) ++ (lib.attrByPath [ attr ] [ ] b);
       in
       rec {
+        devShells.default = mergeShells [
+          (shells { }).base
+          (shells { }).nix
+        ];
         mergeShells = envs: defaultpkgs.mkShell (builtins.foldl'
           (a: v: ({
             buildInputs = mergeAttr a v "buildInputs";
@@ -40,7 +44,7 @@
             (buildInputs { inherit pkgs; });
 
         buildInputs = { pkgs ? defaultpkgs }: {
-          base = with pkgs; [ gnumake ];
+          base = with pkgs; [ gnumake go-task ];
           golang = [
             pkgs.go
             pkgs.gopls
@@ -85,6 +89,11 @@
             rustfmt
             rust-analyzer
             cargo-edit
+          ];
+
+          nix = with pkgs; [
+            nil
+            nixpkgs-fmt
           ];
         };
 
