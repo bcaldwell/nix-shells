@@ -4,6 +4,11 @@
   inputs.flake-utils.url = "github:numtide/flake-utils";
 
   outputs = { self, nixpkgs, flake-utils }:
+    # maybe something like this then, I don't need to use the flake-utils
+    # supportedSystems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
+    #   forEachSupportedSystem = f: nixpkgs.lib.genAttrs supportedSystems (system: f {
+    #     pkgs = import nixpkgs { inherit system; };
+    #   });
     flake-utils.lib.eachDefaultSystem (system:
       let
         defaultpkgs = nixpkgs.legacyPackages.${system};
@@ -89,6 +94,12 @@
             rustfmt
             rust-analyzer
             cargo-edit
+          ];
+
+          nodejs = with pkgs; [
+            pnpm
+            vtsls
+            nodePackages.typescript-language-server
           ];
 
           nix = with pkgs; [
